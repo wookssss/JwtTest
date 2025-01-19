@@ -2,9 +2,10 @@ server:
   port: 8080
   servlet:
     context-path: /
-    encoding: UTF-8
-    enabled: true
-    force: true
+    encoding:
+      charset: UTF-8
+      enabled: true
+      force: true
 
 spring:
   datasource:
@@ -13,10 +14,11 @@ spring:
     password: 1234
   jpa:
     show-sql: true
+    hibernate:
+      ddl-auto: none
     properties:
       hibernate:
         format_sql: true
-        ddl-auto: validate
         dialect: org.hibernate.dialect.PostgreSQLDialect
     defer-datasource-initialization: true
 

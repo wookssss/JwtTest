@@ -39,6 +39,7 @@ dependencies {
     annotationProcessor 'org.projectlombok:lombok'
 
     // PostgreSQL Driver
+    implementation group: 'com.zaxxer', name: 'HikariCP', version: '6.0.0'
     implementation group: 'org.postgresql', name: 'postgresql', version: '42.7.4'
     runtimeOnly 'org.postgresql:postgresql'
 
