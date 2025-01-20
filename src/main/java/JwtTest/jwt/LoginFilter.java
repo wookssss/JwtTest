@@ -40,6 +40,7 @@ public class LoginFilter extends UsernamePasswordAuthenticationFilter {
     protected void successfulAuthentication(
             HttpServletRequest request, HttpServletResponse response, FilterChain chain, Authentication authResult
     ) throws IOException, ServletException {
+        System.out.println("success");
         super.successfulAuthentication(request, response, chain, authResult);
     }
 
@@ -47,6 +48,7 @@ public class LoginFilter extends UsernamePasswordAuthenticationFilter {
     protected void unsuccessfulAuthentication(
             HttpServletRequest request, HttpServletResponse response, AuthenticationException failed
     ) throws IOException, ServletException {
+        System.out.println("failed");
         super.unsuccessfulAuthentication(request, response, failed);
     }
 }
