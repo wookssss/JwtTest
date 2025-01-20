@@ -29,7 +29,7 @@ public class JoinService {
 
         user.setUsername(username);
         user.setPassword(bCryptPasswordEncoder.encode(password));
-        user.setRole("ADMIN");
+        user.setRole("ROLE_ADMIN");
 
         userRepository.save(user);
 

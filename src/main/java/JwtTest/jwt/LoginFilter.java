@@ -1,5 +1,6 @@
 package JwtTest.jwt;
 
+import JwtTest.dto.CustomUserDetails;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -8,15 +9,20 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
+import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 import java.io.IOException;
+import java.util.Collection;
+import java.util.Iterator;
 
 public class LoginFilter extends UsernamePasswordAuthenticationFilter {
     private final AuthenticationManager authenticationManager;
+    private final JwtUtil jwtUtil;
 
-    public LoginFilter(AuthenticationManager authenticationManager){
+    public LoginFilter(AuthenticationManager authenticationManager, JwtUtil jwtUtil){
         this.authenticationManager = authenticationManager;
+        this.jwtUtil = jwtUtil;
     }
 
     @Override
@@ -38,10 +44,19 @@ public class LoginFilter extends UsernamePasswordAuthenticationFilter {
 
     @Override
     protected void successfulAuthentication(
-            HttpServletRequest request, HttpServletResponse response, FilterChain chain, Authentication authResult
+            HttpServletRequest request, HttpServletResponse response, FilterChain chain, Authentication authentication
     ) throws IOException, ServletException {
-        System.out.println("success");
-        super.successfulAuthentication(request, response, chain, authResult);
+        CustomUserDetails customUserDetails = (CustomUserDetails) authentication.getPrincipal();
+        String username = customUserDetails.getUsername();
+
+        Collection<? extends GrantedAuthority> authorities = authentication.getAuthorities();
+        Iterator<? extends GrantedAuthority> iterator = authorities.iterator();
+        GrantedAuthority auth = iterator.next();
+
+        String role = auth.getAuthority();
+        String token = jwtUtil.createJwt(username, role, 60*60*10000L);
+
+        response.addHeader("Authorization", "Bearer "+token);
     }
 
     @Override
@@ -49,6 +64,6 @@ public class LoginFilter extends UsernamePasswordAuthenticationFilter {
             HttpServletRequest request, HttpServletResponse response, AuthenticationException failed
     ) throws IOException, ServletException {
         System.out.println("failed");
-        super.unsuccessfulAuthentication(request, response, failed);
+        response.setStatus(401);
     }
 }

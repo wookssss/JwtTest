@@ -21,7 +21,7 @@ spring:
         format_sql: true
         dialect: org.hibernate.dialect.PostgreSQLDialect
     defer-datasource-initialization: true
-
 jwt:
-  issuer: jeonguk9802@gmail.com
-  secret_key: jplan
+  header: Authorization
+  secret: 292be4540f000922001c641b124039f240a1752c36e392a574fe72788f0e8f15ce4169919182b23cf105accc571fa30a6ae7ea0175451244a9d39320e14a5f09
+  token-validity-in-second: 86400

@@ -1,5 +1,7 @@
 package JwtTest.config;
 
+import JwtTest.jwt.JwtFilter;
+import JwtTest.jwt.JwtUtil;
 import JwtTest.jwt.LoginFilter;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -13,11 +15,12 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 
 @Configuration
 public class SecurityConfig {
-    public final AuthenticationConfiguration authenticationConfiguration;
+    private final AuthenticationConfiguration authenticationConfiguration;
+    private final JwtUtil jwtUtil;
 
-    public SecurityConfig(AuthenticationConfiguration authenticationConfiguration){
+    public SecurityConfig(AuthenticationConfiguration authenticationConfiguration, JwtUtil jwtUtil){
         this.authenticationConfiguration = authenticationConfiguration;
-
+        this.jwtUtil = jwtUtil;
     }
     @Bean
     public AuthenticationManager authenticationManager(AuthenticationConfiguration configuration) throws Exception{
@@ -40,10 +43,11 @@ public class SecurityConfig {
                         .requestMatchers("/admin").hasRole("ADMIN")
                         .anyRequest().authenticated()
                 );
-
+        http
+                .addFilterBefore(new JwtFilter(jwtUtil), LoginFilter.class);
         // UsernamePasswordAuthenticationFilter는 form-login 방식에서 사용되기 때문에 대체하기 위함
         http
-                .addFilterAt(new LoginFilter(authenticationManager(authenticationConfiguration)), UsernamePasswordAuthenticationFilter.class);
+                .addFilterAt(new LoginFilter(authenticationManager(authenticationConfiguration), jwtUtil), UsernamePasswordAuthenticationFilter.class);
 
         // 세션 설정
         http
